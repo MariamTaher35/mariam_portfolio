@@ -25,6 +25,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/my_cv/Mariam_Taher_Kamel.pdf
+    - assets/my_cv/
     - assets/certificates/
     - assets/projects/
