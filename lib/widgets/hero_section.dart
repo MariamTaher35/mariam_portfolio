@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/portfolio_data.dart';
 import '../utils/app_theme.dart';
 import 'package:web/web.dart' as web;
@@ -248,22 +249,12 @@ class HeroSection extends StatelessWidget {
                         label: "Download CV",
                         isPrimary: false,
                         icon: Icons.download_rounded,
-                        onPressed: () {
-                          const String assetPath = 'assets/my_cv/Mariam_Taher_Kamel.pdf';
-
-                          // 1. Create the anchor element using the modern web package
-                          final web.HTMLAnchorElement anchor = web.document.createElement('a') as web.HTMLAnchorElement;
-
-                          // 2. Set the link and the download name
-                          anchor.href = assetPath;
-                          anchor.download = "Mariam_Taher_Kamel_CV.pdf";
-
-                          // 3. Temporarily add it to the page and click it
-                          web.document.body?.append(anchor);
-                          anchor.click();
-
-                          // 4. Remove it immediately after
-                          anchor.remove();
+                        onPressed: () async {
+                          final Uri url = Uri.parse('assets/my_cv/Mariam_Taher_Kamel.pdf');
+                          if (!await launchUrl(url)) {
+                            // Try the fallback path if the first one fails
+                            await launchUrl(Uri.parse('build/web/assets/my_cv/Mariam_Taher_Kamel.pdf'));
+                          }
                         },
                       ),
                     ],
