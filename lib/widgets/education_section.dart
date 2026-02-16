@@ -8,53 +8,56 @@ class EducationSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isDesktop = screenWidth > 900;
+    final bool isMobile = screenWidth < 768;
+    final bool isDesktop = screenWidth > 900;
 
     return Container(
       width: double.infinity,
       color: AppTheme.surfaceCard,
       padding: EdgeInsets.symmetric(
-        horizontal: isDesktop ? 80 : 24,
-        vertical: 100,
+        horizontal: isMobile ? 20 : (isDesktop ? 80 : 40),
+        vertical: isMobile ? 60 : 100,
       ),
       child: Center(
-        child: SizedBox(
-          width: 1100,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
           child: Column(
             children: [
               // Decorative header
               Icon(
                 Icons.auto_awesome_rounded,
                 color: AppTheme.accentGold,
-                size: 32,
+                size: isMobile ? 24 : 32,
               ),
               const SizedBox(height: 16),
               Text(
                 'Academic Background',
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  fontSize: isDesktop ? 48 : 36,
+                  fontSize: isMobile ? 32 : (isDesktop ? 48 : 36),
                   color: AppTheme.accentBrown,
+                  fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: 600,
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
                 child: Text(
                   'Building a strong foundation in computer science and technology',
                   style: GoogleFonts.nunito(
                     color: AppTheme.textDim,
-                    fontSize: 16,
+                    fontSize: isMobile ? 14 : 16,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 64),
+              SizedBox(height: isMobile ? 40 : 64),
 
+              // Education Card
               Container(
                 constraints: const BoxConstraints(maxWidth: 800),
-                padding: const EdgeInsets.all(48),
+                padding: EdgeInsets.all(isMobile ? 24 : 48),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -78,18 +81,17 @@ class EducationSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    // Adaptive Layout: Column for mobile, Row for desktop
+                    Flex(
+                      direction: isMobile ? Axis.vertical : Axis.horizontal,
+                      crossAxisAlignment: isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
                       children: [
                         Container(
-                          width: 80,
-                          height: 80,
+                          width: isMobile ? 70 : 80,
+                          height: isMobile ? 70 : 80,
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [
-                                AppTheme.accentMauve,
-                                AppTheme.accentRose,
-                              ],
+                              colors: [AppTheme.accentMauve, AppTheme.accentRose],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -102,43 +104,42 @@ class EducationSection extends StatelessWidget {
                               ),
                             ],
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.school_rounded,
                             color: Colors.white,
-                            size: 40,
+                            size: isMobile ? 32 : 40,
                           ),
                         ),
-                        const SizedBox(width: 24),
+                        SizedBox(width: isMobile ? 0 : 24, height: isMobile ? 20 : 0),
                         Expanded(
+                          flex: isMobile ? 0 : 1,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment: isMobile ? CrossAxisAlignment.center : CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Bachelor of Computer and Information Systems',
+                                textAlign: isMobile ? TextAlign.center : TextAlign.start,
                                 style: GoogleFonts.cormorantGaramond(
-                                  fontSize: 28,
+                                  fontSize: isMobile ? 22 : 28,
                                   fontWeight: FontWeight.w600,
                                   color: AppTheme.textMain,
-                                  height: 1.3,
+                                  height: 1.2,
                                 ),
                               ),
                               const SizedBox(height: 12),
-                              Row(
+                              // Location Row
+                              Wrap(
+                                alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 8,
                                 children: [
-                                  Icon(
-                                    Icons.location_on_rounded,
-                                    size: 20,
-                                    color: AppTheme.accentBrown,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'El Shorouk Academy',
-                                      style: GoogleFonts.nunito(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w700,
-                                        color: AppTheme.accentBrown,
-                                      ),
+                                  Icon(Icons.location_on_rounded, size: 18, color: AppTheme.accentBrown),
+                                  Text(
+                                    'El Shorouk Academy',
+                                    style: GoogleFonts.nunito(
+                                      fontSize: isMobile ? 16 : 18,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.accentBrown,
                                     ),
                                   ),
                                 ],
@@ -147,7 +148,7 @@ class EducationSection extends StatelessWidget {
                               Text(
                                 'Cairo, Egypt',
                                 style: GoogleFonts.nunito(
-                                  fontSize: 15,
+                                  fontSize: 14,
                                   color: AppTheme.textSecondary,
                                 ),
                               ),
@@ -156,91 +157,26 @@ class EducationSection extends StatelessWidget {
                         ),
                       ],
                     ),
+
                     const SizedBox(height: 32),
-                    Container(
-                      height: 1,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            AppTheme.accentRose.withOpacity(0),
-                            AppTheme.accentRose.withOpacity(0.3),
-                            AppTheme.accentRose.withOpacity(0),
-                          ],
-                        ),
-                      ),
-                    ),
+                    _buildDivider(),
                     const SizedBox(height: 32),
-                    Row(
+
+                    // Badges Section (Wrap handles overflow automatically)
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      alignment: isMobile ? WrapAlignment.center : WrapAlignment.start,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppTheme.accentGold.withOpacity(0.2),
-                                AppTheme.accentGold.withOpacity(0.1),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppTheme.accentGold.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.calendar_today_rounded,
-                                size: 16,
-                                color: AppTheme.accentBrown,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                '2020 – 2024',
-                                style: GoogleFonts.nunito(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.accentBrown,
-                                ),
-                              ),
-                            ],
-                          ),
+                        _buildBadge(
+                          icon: Icons.calendar_today_rounded,
+                          label: '2020 – 2024',
+                          color: AppTheme.accentGold,
                         ),
-                        const SizedBox(width: 16),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 12,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppTheme.accentSage.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: AppTheme.accentSage.withOpacity(0.3),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.verified_rounded,
-                                size: 16,
-                                color: AppTheme.accentSage,
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                'Graduated',
-                                style: GoogleFonts.nunito(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppTheme.textMain,
-                                ),
-                              ),
-                            ],
-                          ),
+                        _buildBadge(
+                          icon: Icons.verified_rounded,
+                          label: 'Graduated',
+                          color: AppTheme.accentSage,
                         ),
                       ],
                     ),
@@ -250,6 +186,47 @@ class EducationSection extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      height: 1,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.accentRose.withOpacity(0),
+            AppTheme.accentRose.withOpacity(0.3),
+            AppTheme.accentRose.withOpacity(0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBadge({required IconData icon, required String label, required Color color}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color == AppTheme.accentSage ? color : AppTheme.accentBrown),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: GoogleFonts.nunito(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: color == AppTheme.accentSage ? AppTheme.textMain : AppTheme.accentBrown,
+            ),
+          ),
+        ],
       ),
     );
   }

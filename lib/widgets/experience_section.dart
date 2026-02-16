@@ -9,17 +9,20 @@ class ExperienceSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 800;
+    // Define breakpoints for responsiveness
+    final bool isMobile = screenWidth < 768;
+    final bool isTablet = screenWidth >= 768 && screenWidth < 1024;
 
     return Container(
       color: AppTheme.bgBeige,
       padding: EdgeInsets.symmetric(
-        horizontal: screenWidth > 900 ? 80 : 24,
-        vertical: 100,
+        horizontal: isMobile ? 20 : (screenWidth > 1200 ? screenWidth * 0.1 : 40),
+        vertical: isMobile ? 60 : 100,
       ),
       child: Center(
-        child: SizedBox(
-          width: 1100,
+        child: ConstrainedBox(
+          // Prevents the section from becoming too wide on ultra-wide monitors
+          constraints: const BoxConstraints(maxWidth: 1100),
           child: Column(
             children: [
               // Section Tag
@@ -46,27 +49,34 @@ class ExperienceSection extends StatelessWidget {
 
               Text(
                 'Professional Journey',
-                style: Theme.of(context).textTheme.displayMedium,
+                textAlign: TextAlign.center,
+                style: isMobile
+                    ? Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textMain,
+                )
+                    : Theme.of(context).textTheme.displayMedium,
               ),
               const SizedBox(height: 16),
-              SizedBox(
-                width: 600,
+
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
                 child: Text(
                   'My career path and professional growth',
                   style: GoogleFonts.nunito(
                     color: AppTheme.textDim,
-                    fontSize: 16,
+                    fontSize: isMobile ? 14 : 16,
                     height: 1.6,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              const SizedBox(height: 64),
+              SizedBox(height: isMobile ? 40 : 64),
 
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Elegant Timeline
+                  // Elegant Timeline - Hidden on Mobile for better space usage
                   if (!isMobile)
                     SizedBox(
                       width: 40,
@@ -75,17 +85,13 @@ class ExperienceSection extends StatelessWidget {
                           PortfolioData.experiences.length,
                               (index) => Column(
                             children: [
-                              // Elegant Dot
                               Container(
                                 width: 16,
                                 height: 16,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
-                                    colors: [
-                                      AppTheme.accentBrown,
-                                      AppTheme.accentMauve,
-                                    ],
+                                    colors: [AppTheme.accentBrown, AppTheme.accentMauve],
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -99,7 +105,7 @@ class ExperienceSection extends StatelessWidget {
                               if (index != PortfolioData.experiences.length - 1)
                                 Container(
                                   width: 2,
-                                  height: 180,
+                                  height: 250, // Matches approximate card height
                                   decoration: BoxDecoration(
                                     gradient: LinearGradient(
                                       begin: Alignment.topCenter,
@@ -118,10 +124,14 @@ class ExperienceSection extends StatelessWidget {
                     ),
                   if (!isMobile) const SizedBox(width: 40),
 
+                  // Experience Cards
                   Expanded(
                     child: Column(
                       children: PortfolioData.experiences
-                          .map((exp) => _ExperienceCard(experience: exp))
+                          .map((exp) => _ExperienceCard(
+                          experience: exp,
+                          isMobile: isMobile
+                      ))
                           .toList(),
                     ),
                   ),
@@ -137,8 +147,12 @@ class ExperienceSection extends StatelessWidget {
 
 class _ExperienceCard extends StatefulWidget {
   final dynamic experience;
+  final bool isMobile;
 
-  const _ExperienceCard({required this.experience});
+  const _ExperienceCard({
+    required this.experience,
+    required this.isMobile
+  });
 
   @override
   State<_ExperienceCard> createState() => _ExperienceCardState();
@@ -155,7 +169,7 @@ class _ExperienceCardState extends State<_ExperienceCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         margin: const EdgeInsets.only(bottom: 32),
-        padding: const EdgeInsets.all(36),
+        padding: EdgeInsets.all(widget.isMobile ? 24 : 36),
         transform: Matrix4.identity()..translate(0.0, _isHovered ? -4.0 : 0.0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -177,18 +191,21 @@ class _ExperienceCardState extends State<_ExperienceCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            // Header Section: Swaps between Row and Column based on screen size
+            Flex(
+              direction: widget.isMobile ? Axis.vertical : Axis.horizontal,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
+                  flex: widget.isMobile ? 0 : 1,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         widget.experience.position,
                         style: GoogleFonts.cormorantGaramond(
-                          fontSize: 22,
+                          fontSize: widget.isMobile ? 20 : 22,
                           fontWeight: FontWeight.w700,
                           color: AppTheme.textMain,
                           height: 1.3,
@@ -197,29 +214,17 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppTheme.accentBrown.withOpacity(0.1),
-                                  AppTheme.accentMauve.withOpacity(0.1),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.business_rounded,
-                              size: 16,
-                              color: AppTheme.accentBrown,
-                            ),
+                          Icon(
+                            Icons.business_rounded,
+                            size: 16,
+                            color: AppTheme.accentBrown,
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               widget.experience.company,
                               style: GoogleFonts.nunito(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: AppTheme.accentBrown,
                               ),
@@ -230,12 +235,12 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 16),
+                if (widget.isMobile) const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppTheme.accentGold.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(10),
                     border: Border.all(
                       color: AppTheme.accentGold.withOpacity(0.2),
                     ),
@@ -243,18 +248,14 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.calendar_today_rounded,
-                        size: 14,
-                        color: AppTheme.accentGold,
-                      ),
+                      Icon(Icons.calendar_today_rounded, size: 12, color: AppTheme.accentGold),
                       const SizedBox(width: 8),
                       Text(
                         widget.experience.duration,
                         style: GoogleFonts.nunito(
-                          fontSize: 12,
+                          fontSize: 11,
                           color: AppTheme.accentGold,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ],
@@ -264,8 +265,9 @@ class _ExperienceCardState extends State<_ExperienceCard> {
             ),
             const SizedBox(height: 24),
 
+            // Responsibilities List
             ...widget.experience.responsibilities.map<Widget>((resp) => Padding(
-              padding: const EdgeInsets.only(bottom: 14),
+              padding: const EdgeInsets.only(bottom: 12),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -275,21 +277,18 @@ class _ExperienceCardState extends State<_ExperienceCard> {
                     height: 6,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [
-                          AppTheme.accentBrown,
-                          AppTheme.accentMauve,
-                        ],
+                        colors: [AppTheme.accentBrown, AppTheme.accentMauve],
                       ),
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 14),
                   Expanded(
                     child: Text(
                       resp,
                       style: GoogleFonts.nunito(
-                        fontSize: 15,
-                        height: 1.7,
+                        fontSize: widget.isMobile ? 14 : 15,
+                        height: 1.6,
                         color: AppTheme.textSecondary,
                       ),
                     ),
