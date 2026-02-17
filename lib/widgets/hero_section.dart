@@ -248,23 +248,20 @@ class HeroSection extends StatelessWidget {
                         label: "Download CV",
                         isPrimary: false,
                         icon: Icons.download_rounded,
-                        onPressed: () {
-                          const String assetPath = 'assets/my_cv/Mariam_Taher_Kamel.pdf';
+                          onPressed: () {
+                            final anchor = web.HTMLAnchorElement()
+                              ..href = 'assets/assets/my_cv/Mariam_Taher_Kamel.pdf'
+                              ..download = 'Mariam_Taher_Kamel_CV.pdf'
+                              ..style.display = 'none';
 
-                          // 1. Create the anchor element using the modern web package
-                          final web.HTMLAnchorElement anchor = web.document.createElement('a') as web.HTMLAnchorElement;
+                            web.document.body!.append(anchor);
+                            anchor.click();
+                            anchor.remove();
+                          }
 
-                          // 2. Set the link and the download name
-                          anchor.href = assetPath;
-                          anchor.download = "Mariam_Taher_Kamel_CV.pdf";
 
-                          // 3. Temporarily add it to the page and click it
-                          web.document.body?.append(anchor);
-                          anchor.click();
 
-                          // 4. Remove it immediately after
-                          anchor.remove();
-                        },
+
                       ),
                     ],
                   ),
