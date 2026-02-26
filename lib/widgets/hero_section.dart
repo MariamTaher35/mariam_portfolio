@@ -250,7 +250,7 @@ class HeroSection extends StatelessWidget {
                         icon: Icons.download_rounded,
                           onPressed: () {
                             final anchor = web.HTMLAnchorElement()
-                              ..href = 'assets/assets/my_cv/Mariam_Taher_Kamel.pdf'
+                              ..href = 'assets/assets/my_cv/Mariam_Taher_CV.pdf'
                               ..download = 'Mariam_Taher_Kamel_CV.pdf'
                               ..style.display = 'none';
 
